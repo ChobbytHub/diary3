@@ -1,0 +1,58 @@
+<mxfile host="65bd71144e">
+    <diagram id="NNP7KV-tlXmI8CMcBBvR" name="ページ1">
+        <mxGraphModel dx="726" dy="386" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="19" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry width="920" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="users" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="340" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;id&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;email&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;password_hash&amp;nbsp;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;created_at&amp;nbsp;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1" parent="2" vertex="1">
+                    <mxGeometry x="10" y="30" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="diaries" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="40" width="420" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;id&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;user_id&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;diary_date&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;line1&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;line2&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;line3&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;created_at&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;updated_at&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1" parent="4" vertex="1">
+                    <mxGeometry x="10" y="30" width="80" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="＊" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="4" vertex="1">
+                    <mxGeometry x="-50" y="10" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="4" vertex="1">
+                    <mxGeometry x="-90" y="10" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;BIGINT&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;BIGINT&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;DATE&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TEXT&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TEXT&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TEXT&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TIMESTAMP&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TIMESTAMP&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FF0000;" parent="4" vertex="1">
+                    <mxGeometry x="90" y="30" width="90" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;(PK)&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font&gt;&lt;div style=&quot;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(0, 127, 255), rgb(49, 158, 255));&quot;&gt;(FK → users.id),&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;ON DELETE CASCADE&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(0, 127, 255), rgb(49, 158, 255));&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(0, 127, 255), rgb(49, 158, 255));&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(0, 127, 255), rgb(49, 158, 255));&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#007FFF;" parent="4" vertex="1">
+                    <mxGeometry x="180" y="30" width="240" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;UNIQUE(user_id, diary_date)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;※ 同一ユーザーが同じ日付に複数の日記を登録できない&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="240" width="380" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="endArrow=classic;html=1;exitX=0.234;exitY=0.03;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="10" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="520" y="240" as="sourcePoint"/>
+                        <mxPoint x="549" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;BIGINT&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;VARCHAR(255)&lt;/font&gt;&lt;/div&gt;&lt;span style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;VARCHAR(255)&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;&quot;&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;TIMESTAMP&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#FF0000;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="70" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;(PK)&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL, UNIQUE&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 127, 255);&quot;&gt;NOT NULL&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="70" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="" style="edgeStyle=none;html=1;entryX=0.996;entryY=0.091;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="460" y="50" as="sourcePoint"/>
+                        <mxPoint x="360" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
