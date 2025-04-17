@@ -21,8 +21,8 @@ public interface DiaryService {
     List<Diary> getDiariesForLastTwoYears(User user, LocalDate diaryDate);
 
     // 特定の日記を編集
-    Diary updateDiary(Long diaryId, String line1, String line2, String line3);
+    Diary updateDiary(Long diaryId, User user, String line1, String line2, String line3);
 
     // 日記を削除
-    void deleteDiary(Long diaryId);
+    void deleteDiary(Long diaryId, User user);
 }

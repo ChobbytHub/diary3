@@ -3,6 +3,7 @@ package com.chobby.backend.service.impl;
 import com.chobby.backend.entity.User;
 import com.chobby.backend.repository.UserRepository;
 import com.chobby.backend.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,16 +12,21 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoderを注入
 
-    // コンストラクタインジェクションでリポジトリを注入
-    public UserServiceImpl(UserRepository userRepository) {
+    // コンストラクタインジェクションでリポジトリとPasswordEncoderを注入
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // ユーザーを新規登録または更新
     @Override
     public User saveUser(User user) {
-        // save() は新規作成・更新の両方に対応
+        // パスワードをハッシュ化して passwordHash に設定
+        String encodedPassword = passwordEncoder.encode(user.getPassword()); // パスワードをエンコード
+        user.setPasswordHash(encodedPassword); // ハッシュ化されたパスワードを設定
+        user.setPassword(null); // 元のpasswordフィールドをnullに設定（オプション）
         return userRepository.save(user);
     }
 
