@@ -31,7 +31,7 @@ export default function Signup() {
 
       // 2秒後にログインページに遷移
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 2000);
     } catch (e) {
       if (e.response && e.response.data && e.response.data.message) {
