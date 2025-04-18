@@ -1,19 +1,20 @@
-// src/components/Home.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Diaries from "./Diaries";  // 日記のコンポーネント
 
 export default function Home() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // 初期状態をnullに設定
 
   // ログイン状態の確認
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-    if (token) {
-      setIsAuthenticated(true); // トークンがあればログイン状態
-    }
+    setIsAuthenticated(!!token); // トークンがあればログイン状態
   }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>; // ローディング表示
+  }
 
   // ログアウト処理
   const handleLogout = () => {
