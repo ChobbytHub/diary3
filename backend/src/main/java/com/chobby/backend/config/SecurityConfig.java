@@ -77,6 +77,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("https://chobbythub.github.io", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // ヘッダーにAuthorizationを露出させる
         configuration.setAllowCredentials(true); // 必要なら true
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -100,7 +101,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())  // REST APIではCSRF不要
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS設定を有効にする
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login").permitAll() // "/login"は認証不要
+                .requestMatchers("/auth/login", "/auth/signup").permitAll() // "/login"は認証不要
                 .anyRequest().authenticated()          // その他は認証が必要
             )
             .authenticationProvider(authenticationProvider()) // 認証プロバイダーを設定

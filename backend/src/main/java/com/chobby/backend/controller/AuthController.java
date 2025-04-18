@@ -5,12 +5,10 @@ import com.chobby.backend.dto.LoginRequest;
 import com.chobby.backend.dto.SignupRequest;
 import com.chobby.backend.exception.ErrorResponse;
 import com.chobby.backend.entity.User;
-import com.chobby.backend.repository.UserRepository;
 import com.chobby.backend.security.JwtUtil;
 import com.chobby.backend.service.UserService;
 
 import jakarta.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,19 +16,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 /**
- * 認証関連の処理をまとめたコントローラー。
- * <ul>
- *   <li>POST /auth/signup   : 新規ユーザー登録</li>
- *   <li>POST /auth/login    : ログイン (JWT発行)</li>
- *   <li>POST /auth/logout   : ログアウト (SecurityContextをクリア)</li>
- * </ul>
+ * 認証関連のエンドポイントを提供するコントローラー。
+ * ・POST /auth/signup   : 新規ユーザー登録
+ * ・POST /auth/login    : ログイン(JWT発行)
+ * ・POST /auth/logout   : ログアウト
  */
 @RestController
 @RequestMapping("/auth")
@@ -41,96 +39,103 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public AuthController(
             AuthenticationManager authenticationManager,
             JwtUtil jwtUtil,
-            UserService userService,
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            UserService userService
+    ) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userService = userService;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * 新規ユーザー登録。
-     * 同一メールアドレスの重複登録を防ぎ、成功時は200 OKを返す。
-     *
-     * @param request SignupRequest(email, password)
-     * @return 成功: 200 OK, 失敗: 400 Bad Request
+     * ・重複チェック後、UserService.saveUser でハッシュ化＋保存
      */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
-        // 既に同じメールアドレスで登録済みの場合はエラー
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        // 重複チェック
+        Optional<User> exists = userService.findUserByEmail(request.getEmail());
+        if (exists.isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(
                             400,
                             "Bad Request",
                             "このメールアドレスは既に登録されています。",
-                            java.time.LocalDateTime.now()
+                            LocalDateTime.now()
                     ));
         }
 
-        // パスワードをハッシュ化して保存
+        // ログで確認
+        logger.info("リクエスト情報確認 - メールアドレス: {}", request.getEmail());
+        logger.info("リクエスト情報確認 - 生パスワード: {}", request.getPassword()); // パスワードはクリアテキストなので、注意して使う
+
+        // エンティティ作成 & サービスで保存
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
+        user.setRawPassword(request.getPassword());  // 生パスワードをセット
 
-        logger.info("新規ユーザー登録: {}", request.getEmail());
-        return ResponseEntity.ok("ユーザー登録が完了しました。");
+        // ログで確認
+        logger.info("ユーザー登録確認 - メールアドレス: {}", user.getEmail());
+        logger.info("ユーザー登録確認 - 生パスワード: {}", user.getRawPassword()); // パスワードはクリアテキストなので、注意して使う
+
+
+        try {
+            userService.saveUser(user);
+            logger.info("新規ユーザー登録成功: {}", request.getEmail());
+            return ResponseEntity.ok("ユーザー登録が完了しました。");
+        } catch (Exception e) {
+            logger.error("ユーザー登録処理中に例外: {}", e.getMessage(), e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(
+                            500,
+                            "Internal Server Error",
+                            "ユーザー登録中に予期しないエラーが発生しました。",
+                            LocalDateTime.now()
+                    ));
+        }
     }
 
     /**
      * ログイン処理。
-     * 認証成功時にJWTトークンを返却する。
-     *
-     * @param req LoginRequest(email, password)
-     * @return JWTトークン or 401 Unauthorized
+     * ・AuthenticationManager で認証後、JWT 発行
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
-            // 認証用トークンを作成
-            UsernamePasswordAuthenticationToken token =
+            UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword());
+            Authentication auth = authenticationManager.authenticate(authToken);
 
-            // 認証実行
-            Authentication auth = authenticationManager.authenticate(token);
-
-            // 認証成功 → JWTを生成
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
+            logger.info("ログイン成功: {}", req.getEmail());
             return ResponseEntity.ok(new JwtResponse(jwt));
         } catch (AuthenticationException ex) {
-            logger.warn("Login failed for '{}': {}", req.getEmail(), ex.getMessage());
+            logger.warn("ログイン失敗: {} - {}", req.getEmail(), ex.getMessage());
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(
                             401,
                             "Unauthorized",
-                            "メールアドレスまたはパスワードが正しくありません",
-                            java.time.LocalDateTime.now()
+                            "メールアドレスまたはパスワードが正しくありません。",
+                            LocalDateTime.now()
                     ));
         }
     }
 
     /**
      * ログアウト処理。
-     * SecurityContext をクリアし、204 No Content を返す。
-     * クライアント側では JWT を破棄してください。
+     * ・SecurityContext をクリアし 204 を返却
      */
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout() {
-        SecurityContextHolder.clearContext();  // セキュリティコンテキストをクリア
+        SecurityContextHolder.clearContext();
+        logger.info("ログアウト処理が実行されました。");
     }
 }

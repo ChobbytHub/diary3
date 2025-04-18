@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 public class SignupRequest {
 
-    @NotEmpty
+    @NotEmpty(message = "メールアドレスは必須です")
     @Email
     private String email;
 
-    @NotEmpty
+    @NotEmpty(message = "パスワードは必須です")
     private String password;
 }

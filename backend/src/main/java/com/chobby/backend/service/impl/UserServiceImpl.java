@@ -12,37 +12,41 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // PasswordEncoderを注入
+    private final PasswordEncoder passwordEncoder;
 
-    // コンストラクタインジェクションでリポジトリとPasswordEncoderを注入
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ユーザーを新規登録または更新
+    /**
+     * 新規登録・更新時に呼ばれるメソッド。
+     * ・DTOから受け取った生パスワードを BCrypt でハッシュ化してセット
+     * ・password フィールドは永続化しないため null に
+     */
     @Override
     public User saveUser(User user) {
-        // パスワードをハッシュ化して passwordHash に設定
-        String encodedPassword = passwordEncoder.encode(user.getPassword()); // パスワードをエンコード
-        user.setPasswordHash(encodedPassword); // ハッシュ化されたパスワードを設定
-        user.setPassword(null); // 元のpasswordフィールドをnullに設定（オプション）
+        if (user.getRawPassword() != null && !user.getRawPassword().trim().isEmpty()) {
+            String hashed = passwordEncoder.encode(user.getRawPassword());
+            user.setPasswordHash(hashed);
+        }
+        user.setRawPassword(null);
         return userRepository.save(user);
     }
 
-    // ユーザーIDで検索
     @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    // メールアドレスでユーザーを検索（ログイン時などに使用）
     @Override
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // ユーザーIDで削除
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);

@@ -37,7 +37,7 @@ public class User implements UserDetails {
 
     // 🔐 平文パスワード（一時的に使用、DBに保存しない）
     @Transient
-    private String password;
+    private String rawPassword;
 
     // 🔐 ハッシュ化されたパスワード（DBに保存）
     @Column(nullable = false)
