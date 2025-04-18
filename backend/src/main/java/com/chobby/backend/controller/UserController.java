@@ -1,11 +1,9 @@
 package com.chobby.backend.controller;
 
 import com.chobby.backend.entity.User;
-import com.chobby.backend.repository.UserRepository;
 import com.chobby.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
