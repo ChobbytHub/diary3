@@ -1,6 +1,15 @@
 package com.chobby.backend.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * JWT トークンのレスポンス DTO
  */
-public record JwtResponse(String token) {}
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class JwtResponse {
+    private String token;
+}
