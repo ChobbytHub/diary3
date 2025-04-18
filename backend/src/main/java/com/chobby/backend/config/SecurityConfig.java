@@ -102,6 +102,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS設定を有効にする
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/login", "/auth/signup").permitAll() // "/login"は認証不要
+                .requestMatchers("/health").permitAll() // ヘルスチェックは認証不要
                 .anyRequest().authenticated()          // その他は認証が必要
             )
             .authenticationProvider(authenticationProvider()) // 認証プロバイダーを設定
