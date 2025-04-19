@@ -1,34 +1,23 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/Home';      // 未ログイン時のトップページ
+import Home from './components/Home';      // 未ログイン / ログイン済み 両方を切り替える
 import Signup from './components/Signup';  // サインアップ画面
 import Login from './components/Login';    // ログイン画面
-import Diaries from './components/Diaries';// 日記一覧画面
 
-function App() {
-  const isAuthenticated = !!localStorage.getItem("jwt"); // JWT の有無で認証判定
-
+export default function App() {
   return (
     <Router basename="/diary3">
       <Routes>
-        {/* ルート `/` */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated
-              ? <Diaries />  // ログイン済みなら日記一覧を表示
-              : <Home />     // 未ログインならホームを表示
-          }
-        />
+        {/* ここで常に Home を表示。Home の中でログイン状態に応じた分岐を行う */}
+        <Route path="/" element={<Home />} />
 
-        {/* サインアップ / ログインは `/signup`・`/login` に分けてもOK */}
+        {/* サインアップ／ログインは別パス */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login"  element={<Login />} />
 
-        {/* 404 */}
+        {/* 存在しないパスは 404 */}
         <Route path="*" element={<div>404 - ページが見つかりません</div>} />
       </Routes>
     </Router>
   );
 }
-
-export default App;

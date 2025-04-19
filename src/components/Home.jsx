@@ -1,25 +1,15 @@
-import { useState, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Diaries from "./Diaries";  // 日記のコンポーネント
+import { AuthContext } from "../contexts/AuthContext"; // AuthContext をインポート
+import Diaries from "./Diaries"; // 日記のコンポーネント
 
 export default function Home() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // 初期状態をnullに設定
-
-  // ログイン状態の確認
-  useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    setIsAuthenticated(!!token); // トークンがあればログイン状態
-  }, []);
-
-  if (isAuthenticated === null) {
-    return <div>Loading...</div>; // ローディング表示
-  }
+  const { isAuthenticated, logout } = useContext(AuthContext); // AuthContext から isAuthenticated と logout を取得
 
   // ログアウト処理
   const handleLogout = () => {
-    localStorage.removeItem("jwt");
-    setIsAuthenticated(false);
+    logout(); // AuthContext の logout 関数を呼び出してログアウト処理
     navigate("/login"); // ログインページに遷移
   };
 
