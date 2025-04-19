@@ -6,29 +6,29 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // JWT の有効性を確認する関数
   const checkTokenValidity = () => {
     const token = localStorage.getItem("jwt");
     if (!token) return false;
 
     try {
       const decoded = jwtDecode(token);
-      const now = Date.now() / 1000; // 現在時刻（秒）
+      const now = Date.now() / 1000;
       return decoded.exp > now;
     } catch (err) {
       return false;
     }
   };
 
-  // 初回マウント時にトークンを確認
   useEffect(() => {
     if (checkTokenValidity()) {
       setIsAuthenticated(true);
     } else {
-      localStorage.removeItem("jwt"); // 期限切れなら削除
+      localStorage.removeItem("jwt");
       setIsAuthenticated(false);
     }
+    setLoading(false);
   }, []);
 
   const login = () => setIsAuthenticated(true);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
