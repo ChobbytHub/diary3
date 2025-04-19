@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // エラーステート
 
   const checkTokenValidity = () => {
     const token = localStorage.getItem("jwt");
@@ -17,28 +18,33 @@ export const AuthProvider = ({ children }) => {
       const now = Date.now() / 1000;
       return decoded.exp > now;
     } catch (err) {
+      setError("トークンの検証に失敗しました。再度ログインしてください。");
       return false;
     }
   };
 
   useEffect(() => {
-    if (checkTokenValidity()) {
-      setIsAuthenticated(true);
-    } else {
-      localStorage.removeItem("jwt");
-      setIsAuthenticated(false);
-    }
+    const valid = checkTokenValidity();
+    setIsAuthenticated(valid);
     setLoading(false);
   }, []);
 
-  const login = () => setIsAuthenticated(true);
+  const login = (token) => {
+    localStorage.setItem("jwt", token);
+    setIsAuthenticated(true);
+    setError(null); // エラーリセット
+  };
+
   const logout = () => {
     localStorage.removeItem("jwt");
     setIsAuthenticated(false);
+    setError(null); // エラーリセット
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, loading, error, setError }}
+    >
       {children}
     </AuthContext.Provider>
   );

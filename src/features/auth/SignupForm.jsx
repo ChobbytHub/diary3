@@ -1,10 +1,10 @@
-// src/components/Signup.jsx
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
+import { signupUser } from "../../api/auth/signup";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
 
-export default function Signup() {
+export default function SignupForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +23,8 @@ export default function Signup() {
     }
 
     try {
-      // 登録処理のみ
-      await api.post("/auth/signup", { email, password });
+      // サインアップAPI呼び出し
+      await signupUser(email, password);
 
       // 成功メッセージ表示
       setSuccess("登録が完了しました。ログインページに移動します…");
@@ -34,11 +34,7 @@ export default function Signup() {
         navigate("/login");
       }, 2000);
     } catch (e) {
-      if (e.response && e.response.data && e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("登録に失敗しました");
-      }
+      setError("登録に失敗しました");
     }
   };
 
@@ -50,8 +46,7 @@ export default function Signup() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>メールアドレス</label>
-          <br />
-          <input
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -60,8 +55,7 @@ export default function Signup() {
         </div>
         <div>
           <label>パスワード</label>
-          <br />
-          <input
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -70,15 +64,16 @@ export default function Signup() {
         </div>
         <div>
           <label>パスワード（確認）</label>
-          <br />
-          <input
+          <Input
             type="password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
           />
         </div>
-        <button type="submit" disabled={success !== ""}>登録</button>
+        <Button type="submit" disabled={success !== ""}>
+          登録
+        </Button>
       </form>
     </div>
   );
