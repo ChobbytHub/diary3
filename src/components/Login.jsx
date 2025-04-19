@@ -1,30 +1,43 @@
 // src/components/Login.jsx
-import { useState } from "react";
+
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import { AuthContext } from "../contexts/AuthContext";
 
+/**
+ * Login コンポーネント
+ * - メールアドレス・パスワードを入力してログイン
+ * - 成功時にJWTをlocalStorageに保存し、AuthContextで認証状態を更新
+ * - ホーム（"/"）へリダイレクト
+ */
 export default function Login() {
-  const navigate = useNavigate(); // ログイン後に遷移するため
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();                    // 画面遷移用
+  const { login } = useContext(AuthContext);         // AuthContextのlogin関数
+  const [email, setEmail] = useState("");            // メールアドレス
+  const [password, setPassword] = useState("");      // パスワード
+  const [error, setError] = useState("");            // エラーメッセージ
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // 送信前にエラーメッセージをリセット
 
     try {
-      // ログインAPI呼び出し
+      // 1) ログインAPIへPOST
       const { data } = await api.post("/auth/login", { email, password });
-      localStorage.setItem("jwt", data.token); // JWT を localStorage に保存
 
-      // ログイン後の画面に遷移
-      navigate("/"); // 適切な遷移先（例えば日記一覧ページ）へ遷移
+      // 2) JWT を localStorage に保存
+      localStorage.setItem("jwt", data.token);
 
+      // 3) AuthContext にもログイン状態を通知
+      login();
+
+      // 4) ホームへリダイレクト
+      navigate("/");
     } catch (e) {
-      // サーバーエラーのメッセージをエラー表示
-      if (e.response && e.response.data && e.response.data.message) {
-        setError(e.response.data.message); // エラーメッセージをサーバーから取得
+      // サーバーからのエラーメッセージがあれば表示、なければ汎用メッセージ
+      if (e.response?.data?.message) {
+        setError(e.response.data.message);
       } else {
         setError("ログインに失敗しました。再度お試しください。");
       }
@@ -35,9 +48,11 @@ export default function Login() {
     <div>
       <h2>ログイン</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>メールアドレス</label>
+          <br />
           <input
             type="email"
             placeholder="メールアドレス"
@@ -46,8 +61,10 @@ export default function Login() {
             required
           />
         </div>
+
         <div>
           <label>パスワード</label>
+          <br />
           <input
             type="password"
             placeholder="パスワード"
@@ -56,6 +73,7 @@ export default function Login() {
             required
           />
         </div>
+
         <button type="submit">ログイン</button>
       </form>
     </div>
