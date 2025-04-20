@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,10 +23,10 @@ public class DiaryServiceImpl implements DiaryService {
         this.diaryRepository = diaryRepository;
     }
 
-    // 日記を作成するメソッド
+    // 日記を作成するメソッド（行ごとに保存）
     @Override
     @Transactional
-    public Diary createDiary(User user, String line1, String line2, String line3, LocalDate diaryDate) {
+    public Diary createDiary(User user, Integer lineNumber, String text, LocalDate diaryDate) {
         if (diaryDate == null) {
             diaryDate = LocalDate.now(); // もし日付が指定されていなければ、今日の日付を使用
         }
@@ -39,16 +38,15 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         // 同じ日付に対してユーザーの日記が存在するかをチェック
-        if (diaryRepository.existsByUserAndDiaryDate(user, diaryDate)) {
-            throw new DuplicateDiaryException("この日付にはすでに日記が登録されています");
+        if (diaryRepository.existsByUserAndDiaryDateAndLineNumber(user, diaryDate, lineNumber)) {
+            throw new DuplicateDiaryException("この日付と行番号にはすでに日記が登録されています");
         }
 
         Diary diary = new Diary();
         diary.setUser(user);
         diary.setDiaryDate(diaryDate);
-        diary.setLine1(line1);
-        diary.setLine2(line2);
-        diary.setLine3(line3);
+        diary.setLineNumber(lineNumber);
+        diary.setText(text);
 
         return diaryRepository.save(diary);
     }
@@ -61,40 +59,14 @@ public class DiaryServiceImpl implements DiaryService {
 
     // 特定の日付のユーザーの日記を取得
     @Override
-    public Diary getDiaryByDate(User user, LocalDate diaryDate) {
-        return diaryRepository.findByUserAndDiaryDate(user, diaryDate)
-            .orElseThrow(() -> new DiaryNotFoundException("指定された日付の日記が見つかりません"));
-    }
-
-    // 過去2年分の同じ日付の日記を取得
-    @Override
-    public List<Diary> getDiariesForLastTwoYears(User user, LocalDate diaryDate) {
-        // 2年前と1年前の日付を基準に、同じ日付の日記を取得
-        LocalDate twoYearsAgo = diaryDate.minusYears(2);
-        LocalDate oneYearAgo = diaryDate.minusYears(1);
-
-        // それぞれの年から日記を取得
-        List<Diary> diaries = new ArrayList<>();
-
-        // 2年前の同じ日付の日記
-        diaryRepository.findByUserAndDiaryDate(user, twoYearsAgo)
-                       .ifPresent(diaries::add);
-
-        // 1年前の同じ日付の日記
-        diaryRepository.findByUserAndDiaryDate(user, oneYearAgo)
-                       .ifPresent(diaries::add);
-
-        // 現在の日付の同じ日記
-        diaryRepository.findByUserAndDiaryDate(user, diaryDate)
-                       .ifPresent(diaries::add);
-
-        return diaries;
+    public List<Diary> getDiariesByDate(User user, LocalDate diaryDate) {
+        return diaryRepository.findByUserAndDiaryDate(user, diaryDate);
     }
 
     // 特定の日記を編集
     @Override
     @Transactional
-    public Diary updateDiary(Long diaryId, User user, String line1, String line2, String line3) {
+    public Diary updateDiary(Long diaryId, User user, String text) {
         Diary diary = diaryRepository.findById(diaryId)
             .orElseThrow(() -> new DiaryNotFoundException("日記が見つかりません"));
 
@@ -103,9 +75,7 @@ public class DiaryServiceImpl implements DiaryService {
             throw new UnauthorizedAccessException("この日記を更新する権限がありません");
         }
 
-        diary.setLine1(line1);
-        diary.setLine2(line2);
-        diary.setLine3(line3);
+        diary.setText(text);
         diary.setUpdatedAt(LocalDateTime.now());
 
         return diaryRepository.save(diary);

@@ -8,21 +8,18 @@ import java.util.List;
 
 public interface DiaryService {
 
-    // 日記を作成
-    Diary createDiary(User user, String line1, String line2, String line3, LocalDate diaryDate);
+    // 日記の1行を作成
+    Diary createDiary(User user, Integer lineNumber, String text, LocalDate diaryDate);
 
-    // ユーザーの日記一覧を取得
+    // ユーザーの日記一覧を取得（全日記）
     List<Diary> getAllDiaries(User user);
 
     // 特定の日付のユーザーの日記を取得
-    Diary getDiaryByDate(User user, LocalDate diaryDate);
+    List<Diary> getDiariesByDate(User user, LocalDate diaryDate);
 
-    // 過去2年分の同じ日付の日記を取得
-    List<Diary> getDiariesForLastTwoYears(User user, LocalDate diaryDate);
+    // 日記の1行を更新
+    Diary updateDiary(Long diaryId, User user, String text);
 
-    // 特定の日記を編集
-    Diary updateDiary(Long diaryId, User user, String line1, String line2, String line3);
-
-    // 日記を削除
+    // 日記の1行を削除
     void deleteDiary(Long diaryId, User user);
 }

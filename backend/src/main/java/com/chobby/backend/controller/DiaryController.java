@@ -39,9 +39,8 @@ public class DiaryController {
     ) {
         Diary diary = diaryService.createDiary(
                 user,
-                req.getLine1(),
-                req.getLine2(),
-                req.getLine3(),
+                req.getLineNumber(),
+                req.getText(),
                 req.getDiaryDate()
         );
         return toResponse(diary);  // DiaryResponse を返す
@@ -61,7 +60,7 @@ public class DiaryController {
     }
 
     /**
-     * 特定日付の日記と過去2年分を取得
+     * 特定日付の日記を取得
      * GET /api/diaries/{date}
      */
     @GetMapping("/{date}")
@@ -69,23 +68,23 @@ public class DiaryController {
             @AuthenticationPrincipal User user,
             @PathVariable("date") LocalDate date
     ) {
-        return diaryService.getDiariesForLastTwoYears(user, date).stream()
+        return diaryService.getDiariesByDate(user, date).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 日記を更新
-     * PUT /api/diaries/{id}
+     * 日記を更新（PATCHメソッドで更新）
+     * PATCH /api/diaries/{id}
      */
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public DiaryResponse updateDiary(
             @AuthenticationPrincipal User user,
             @PathVariable("id") Long id,
             @Valid @RequestBody DiaryRequest req
     ) {
         // ユーザーがその日記を所有しているか確認
-        Diary updated = diaryService.updateDiary(id, user, req.getLine1(), req.getLine2(), req.getLine3());
+        Diary updated = diaryService.updateDiary(id, user, req.getText());
         return toResponse(updated);
     }
 
@@ -109,9 +108,8 @@ public class DiaryController {
         return new DiaryResponse(
                 d.getId(),
                 d.getDiaryDate(),
-                d.getLine1(),
-                d.getLine2(),
-                d.getLine3()
+                d.getLineNumber(),
+                d.getText()
         );
     }
 }

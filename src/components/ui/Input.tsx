@@ -1,3 +1,6 @@
+// src/components/ui/Input.tsx
+import { InputProps } from "../../types/ui";
+
 export default function Input({
   label,
   type = "text",
@@ -5,7 +8,7 @@ export default function Input({
   onChange,
   required = false,
   ...rest
-}) {
+}: InputProps) {
   return (
     <div>
       {label && <label>{label}</label>}

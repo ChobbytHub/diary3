@@ -1,17 +1,18 @@
-// src/api/index.js
-
 import axios from "axios";
+
+// Vite では import.meta.env を利用して環境変数を取得
+const baseURL = import.meta.env.VITE_API_URL as string;
 
 // Axios インスタンス作成
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL,
   headers: { "Content-Type": "application/json" },
 });
 
 // リクエスト前に JWT をセット
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("jwt");
-  if (token) {
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -24,14 +25,10 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401) {
-      // トークン無効や期限切れ → ログアウト処理
+      // トークン無効や期限切れ → トークン削除＋ログイン画面へリダイレクト
       localStorage.removeItem("jwt");
-
-      // 必要ならユーザー通知（例：トーストなど）
-      alert("ログインの有効期限が切れました。再度ログインしてください。");
-
-      // ログインページに遷移（SPA対応：リロードも可）
-      window.location.href = "/login"; // or useNavigate() でリダイレクト
+      window.alert("ログインの有効期限が切れました。再度ログインしてください。");
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);

@@ -1,13 +1,13 @@
-// src/pages/HomePage.jsx
+// src/pages/HomePage.tsx
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import Diaries from "../components/Diaries";
 import Button from "../components/ui/Button";
 
-// ログインしていない場合の案内
 function Welcome() {
   const navigate = useNavigate();
+
   return (
     <div>
       <h2>ようこそ！</h2>
@@ -17,7 +17,6 @@ function Welcome() {
   );
 }
 
-// ログインしている場合の案内
 function LoggedIn() {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
@@ -36,7 +35,6 @@ function LoggedIn() {
   );
 }
 
-// HomePageのメインコンポーネント
 export default function HomePage() {
   const { isAuthenticated, loading } = useContext(AuthContext);
 

@@ -10,10 +10,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 📓 ユーザーの日記を表すエンティティ
+ * 📓 ユーザーの日記の1行を表すエンティティ
  */
 @Entity
-@Table(name = "diaries")
+@Table(
+    name = "diaries",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "diary_date", "line_number"})
+    }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,21 +35,17 @@ public class Diary {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    // 📅 日記の日付（ユーザーが指定、0時過ぎ対策として）
+    // 📅 日記の日付
     @Column(name = "diary_date", nullable = false)
     private LocalDate diaryDate;
 
-    // ✍️ 今日一番失敗したこと
-    @Column(name = "line1")
-    private String line1;
+    // 🔢 行番号（1〜3） 1:✍️ 今日一番失敗したこと 2:✨ 今日一番感動したこと 3:🎯 明日の目標
+    @Column(name = "line_number", nullable = false)
+    private Integer lineNumber;
 
-    // ✨ 今日一番感動したこと
-    @Column(name = "line2")
-    private String line2;
-
-    // 🎯 明日の目標
-    @Column(name = "line3")
-    private String line3;
+    // ✍️ 日記の本文
+    @Column(name = "text", nullable = false)
+    private String text;
 
     // 🕒 作成日時（自動設定）
     @Column(name = "created_at", updatable = false)

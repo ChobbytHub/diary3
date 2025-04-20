@@ -1,39 +1,46 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupUser } from "../../api/auth/signup";
-import Input from "../../components/ui/Input";
-import Button from "../../components/ui/Button";
+import { signupUser } from "../../api/auth/signup"; // ユーザー登録API
+import Input from "../../components/ui/Input"; // 再利用可能なInputコンポーネント
+import Button from "../../components/ui/Button"; // 再利用可能なButtonコンポーネント
 
 export default function SignupForm() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(""); // 成功メッセージ用
 
-  const handleSubmit = async (e) => {
+  // ユーザー入力状態管理
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
+
+  // メッセージ管理
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
+  // フォーム送信処理
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    // パスワード一致確認
     if (password !== confirm) {
       setError("パスワードが一致しません");
       return;
     }
 
     try {
-      // サインアップAPI呼び出し
-      await signupUser(email, password);
+      // APIへユーザー登録リクエスト（オブジェクトで渡す）
+      await signupUser({ email, password });
 
-      // 成功メッセージ表示
+      // 成功メッセージを表示
       setSuccess("登録が完了しました。ログインページに移動します…");
 
-      // 2秒後にログインページに遷移
+      // 2秒後にログイン画面へリダイレクト
       setTimeout(() => {
         navigate("/login");
       }, 2000);
-    } catch (e) {
+    } catch (err) {
+      console.error(err); // デバッグ用
       setError("登録に失敗しました");
     }
   };
@@ -41,8 +48,14 @@ export default function SignupForm() {
   return (
     <div>
       <h2>新規登録</h2>
+
+      {/* エラーメッセージ */}
       {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* 成功メッセージ */}
       {success && <p style={{ color: "green" }}>{success}</p>}
+
+      {/* フォーム */}
       <form onSubmit={handleSubmit}>
         <div>
           <label>メールアドレス</label>
@@ -71,9 +84,7 @@ export default function SignupForm() {
             required
           />
         </div>
-        <Button type="submit" disabled={success !== ""}>
-          登録
-        </Button>
+        <Button type="submit">登録</Button>
       </form>
     </div>
   );
