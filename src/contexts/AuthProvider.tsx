@@ -9,6 +9,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // 認証されているかどうかの状態
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // トークン検証中などのローディング状態
+  const [jwt, setJwt] = useState<string | null>(localStorage.getItem("jwt"));
+  // トークンの有効性をチェックするための状態
   const [loading, setLoading] = useState(true);
   // エラーメッセージ（トークン検証エラーなど）
   const [error, setError] = useState<string | null>(null);
@@ -33,14 +35,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   // コンポーネントの初期化時にトークンの有効性をチェック
   useEffect(() => {
-    const valid = checkTokenValidity();
-    setIsAuthenticated(valid); // 認証状態を更新
-    setLoading(false); // ローディング状態を解除
+    setTimeout(() => {
+      const valid = checkTokenValidity();
+      setIsAuthenticated(valid);
+      setLoading(false);
+    }, 0);
   }, []);
 
   // ログイン処理（トークンをローカルストレージに保存し、認証状態を更新）
   const login = (token: string) => {
     localStorage.setItem("jwt", token); // トークンをローカルストレージに保存
+    setJwt(token); // トークンを状態に保存
     setIsAuthenticated(true); // 認証状態をtrueに設定
     setError(null); // エラーをリセット
   };
@@ -48,6 +53,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // ログアウト処理（トークンを削除し、認証状態をfalseに設定）
   const logout = () => {
     localStorage.removeItem("jwt"); // ローカルストレージからトークンを削除
+    setJwt(null); // トークンを状態から削除
     setIsAuthenticated(false); // 認証状態をfalseに設定
     setError(null); // エラーをリセット
   };
@@ -57,6 +63,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated, // 認証されているかどうか
+        jwt, // JWTトークン
         login, // ログイン処理
         logout, // ログアウト処理
         loading, // ローディング状態
@@ -64,7 +71,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setError, // エラー状態を更新する関数
       }}
     >
-      {children} {/* 認証情報を子コンポーネントに渡す */}
+      {!loading && children} {/* 認証情報を子コンポーネントに渡す */}
     </AuthContext.Provider>
   );
 };

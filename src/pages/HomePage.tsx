@@ -1,9 +1,13 @@
 // src/pages/HomePage.tsx
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useAuth } from "../hooks/useAuth";
 import { AuthContext } from "../contexts/AuthContext";
-import Diaries from "../components/Diaries";
+import Diary from "../features/diary/Diary";
 import Button from "../components/ui/Button";
+import { getAllDiaries } from "../api/diary/getAllDiaries";
+import { setDiaries } from "../redux/diarySlice";
 
 function Welcome() {
   const navigate = useNavigate();
@@ -30,13 +34,30 @@ function LoggedIn() {
     <div>
       <h2>ようこそ、ログインしています！</h2>
       <Button onClick={handleLogout}>ログアウト</Button>
-      <Diaries />
+      <Diary />
     </div>
   );
 }
 
 export default function HomePage() {
   const { isAuthenticated, loading } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { jwt } = useAuth();
+
+  useEffect(() => {
+    if (!jwt) return; // ← トークンがなければ何もしない（リダイレクトでもOK）
+
+    const fetchDiaries = async () => {
+      try {
+        const data = await getAllDiaries();
+        dispatch(setDiaries(data));
+      } catch (err) {
+        console.error("日記の取得に失敗しました", err);
+      }
+    };
+
+    fetchDiaries();
+  }, [jwt, dispatch]);
 
   if (loading) {
     return <div>Loading...</div>;

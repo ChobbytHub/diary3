@@ -1,3 +1,4 @@
+// src/api/index.ts
 import axios from "axios";
 
 // Vite では import.meta.env を利用して環境変数を取得

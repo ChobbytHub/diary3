@@ -9,6 +9,7 @@ export interface DecodedToken {
 // AuthContextで使う型
 export interface AuthContextType {
   isAuthenticated: boolean;
+  jwt: string | null;
   login: (token: string) => void;
   logout: () => void;
   loading: boolean;
