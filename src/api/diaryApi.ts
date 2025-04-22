@@ -55,7 +55,7 @@ export const diaryApi = createApi({
         method: "PATCH",
         body: { text },
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: "Diary", id },
         { type: "Diary", id: "LIST" },
       ],
@@ -67,7 +67,7 @@ export const diaryApi = createApi({
         url: `/api/diaries/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [
+      invalidatesTags: (_result, _error, id) => [
         { type: "Diary", id },
         { type: "Diary", id: "LIST" },
       ],
