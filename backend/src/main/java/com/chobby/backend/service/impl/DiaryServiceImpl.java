@@ -63,33 +63,30 @@ public class DiaryServiceImpl implements DiaryService {
         return diaryRepository.findByUserAndDiaryDate(user, diaryDate);
     }
 
-    // 特定の日記を編集
     @Override
     @Transactional
     public Diary updateDiary(Long diaryId, User user, String text) {
         Diary diary = diaryRepository.findById(diaryId)
             .orElseThrow(() -> new DiaryNotFoundException("日記が見つかりません"));
 
-        // ユーザー確認
-        if (!diary.getUser().equals(user)) {
+        // 認可チェック：ID 同士を比較
+        if (!diary.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("この日記を更新する権限がありません");
         }
 
         diary.setText(text);
         diary.setUpdatedAt(LocalDateTime.now());
-
         return diaryRepository.save(diary);
     }
 
-    // 日記を削除
     @Override
     @Transactional
     public void deleteDiary(Long diaryId, User user) {
         Diary diary = diaryRepository.findById(diaryId)
             .orElseThrow(() -> new DiaryNotFoundException("日記が見つかりません"));
 
-        // ユーザー確認
-        if (!diary.getUser().equals(user)) {
+        // 同様に ID 同士で比較
+        if (!diary.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("この日記を削除する権限がありません");
         }
 
