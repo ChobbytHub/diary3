@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
 
 /**
  * 日記を操作する REST API コントローラー。
@@ -55,20 +54,6 @@ public class DiaryController {
             @AuthenticationPrincipal User user
     ) {
         return diaryService.getAllDiaries(user).stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 特定日付の日記を取得
-     * GET /api/diaries/{date}
-     */
-    @GetMapping("/{date}")
-    public List<DiaryResponse> getByDate(
-            @AuthenticationPrincipal User user,
-            @PathVariable("date") LocalDate date
-    ) {
-        return diaryService.getDiariesByDate(user, date).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
