@@ -32,7 +32,7 @@ export interface DiaryResponse extends DiaryBase {
 }
 
 /**
- * 🧠 DiaryState：Reduxで扱う日記ステート全体の型
+ * 🧠 DiaryState：日記ステート全体の型
  */
 export interface DiaryState {
   diaries: Diary[];
@@ -40,17 +40,11 @@ export interface DiaryState {
 }
 
 /**
- * ✏️ UpdateDiaryPayload：Reduxアクションで使う日記更新のための情報
- * どの日付の何行目にどんな内容を保存するか、という情報。
- */
-export type UpdateDiaryPayload = DiaryBase;
-
-/**
  * 📅 YearGroupProps：YearGroupコンポーネントのprops型
  * - 指定された日付と、その日に対応する3行日記（1行目～3行目）のデータを保持
  * - 各行の日記は部分的に存在する可能性があるため、Partial<Diary>[] を使用
  */
-interface YearGroupProps {
+export interface YearGroupProps {
   date: string; // 日付（例: "2025-04-20"）
   diary: Partial<Diary>[]; // 各行の日記データ。未作成の場合は空オブジェクト
 }
@@ -62,4 +56,8 @@ interface YearGroupProps {
  */
 export interface DiaryProps {
   diary?: Diary; // 日記データ（undefined の場合もあり得る）
+}
+
+export interface EntryRowProps extends DiaryBase {
+  id?: number; // 日記ID（DBの主キー）
 }

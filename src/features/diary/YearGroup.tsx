@@ -15,7 +15,7 @@ export default function YearGroup({ date, diary }: YearGroupProps) {
   )(parsed);
 
   return (
-    <section style={{ margin: "1rem 0" }}>
+    <section>
       <h3>{title}</h3>
       {[1, 2, 3].map((lineNumber) => {
         // 対応するlineNumberのデータを探す
@@ -25,6 +25,7 @@ export default function YearGroup({ date, diary }: YearGroupProps) {
         return (
           <EntryRow
             key={lineNumber}
+            id={found?.id}
             diaryDate={date}
             lineNumber={lineNumber as 1 | 2 | 3} // 型キャストを追加
             text={found?.text ?? ""} // textが存在しない場合は空文字
