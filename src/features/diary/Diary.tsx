@@ -1,6 +1,8 @@
 // src/features/diary/Diary.tsx
-import { useAppSelector } from "../../redux/hooks";
+import React from "react";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { useGetDiariesQuery } from "../../api/diaryApi";
+import { setDiaries } from "../../redux/slices/diarySlice";
 import DateNavigation from "./DateNavigation";
 import YearGroup from "./YearGroup";
 import { toIsoString } from "../../utils/dateUtils";
@@ -9,11 +11,19 @@ import { toIsoString } from "../../utils/dateUtils";
  * Diary：選択された日付の今年・昨年・一昨年の日記を表示
  */
 export default function Diary() {
+  const dispatch = useAppDispatch();
   // Redux から選択日（デフォルトは今日）を取得
   const selectedDate = useAppSelector((state) => state.selectedDate.value);
 
   // RTK Query で全日記を取得
   const { data: diaries = [], isLoading, isError } = useGetDiariesQuery();
+
+  // Reduxにデータを格納
+  React.useEffect(() => {
+    if (diaries.length > 0) {
+      dispatch(setDiaries(diaries)); // Redux ストアに格納
+    }
+  }, [diaries, dispatch]);
 
   // 過去2年分から今年までの3年分を計算
   const threeYearEntries = [-2, -1, 0].map((yearOffset) => {
@@ -38,11 +48,7 @@ export default function Diary() {
       {threeYearEntries
         .sort((a, b) => a.diaryDate.localeCompare(b.diaryDate))
         .map(({ diaryDate, diary }) => (
-          <YearGroup
-            key={diaryDate}
-            date={diaryDate}
-            diary={diary}
-          />
+          <YearGroup key={diaryDate} date={diaryDate} diary={diary} />
         ))}
     </div>
   );
