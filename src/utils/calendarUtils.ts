@@ -17,9 +17,9 @@ export function isSameDay(date1: Date, date2: Date): boolean {
   return isDateFnsSameDay(date1, date2); // date-fnsのisSameDayを使う
 }
 
-// 今日から1年以内の日付かどうかを判定
+// 今日から1年以内の日付かどうかを判定（ちょうど1年前は除外）
 export function isWithinOneYear(date: Date): boolean {
-  return isAfter(date, oneYearAgo) || isSameDay(date, oneYearAgo);
+  return isAfter(date, oneYearAgo); // ← isSameDay(date, oneYearAgo) を除外！
 }
 
 // 今日より後の日付かどうかを判定

@@ -4,3 +4,7 @@ export const toIsoString = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export function fromIsoString(isoString: string): Date {
+  return new Date(isoString);
+}

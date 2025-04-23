@@ -49,15 +49,16 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
           key={day.toISOString()}
           className={[
             "calendar-cell",
+            "relative",                          // ← ここでセル全体を相対位置コンテナに
             "h-12 w-12 sm:h-16 sm:w-16",
             "border border-gray-300",
-            "flex items-center justify-center",
+            "flex items-center justify-center",  // ← 日付を中央に
             "text-sm sm:text-base",
-            isDisabled
-              ? "cursor-default bg-gray-100 text-gray-400"
-              : "cursor-pointer",
-            isToday ? "border-2 border-blue-500" : "",
-            hasDiary ? "bg-green-100" : "",
+            !isDisabled
+              ? "cursor-pointer bg-white text-black"
+              : "cursor-not-allowed bg-gray-300 text-gray-500",
+            isToday && "border-2 border-blue-500",
+            hasDiary && "bg-green-100",
           ]
             .filter(Boolean)
             .join(" ")}
@@ -67,13 +68,14 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
             }
           }}
         >
-          <div className="relative">
-            <span>{format(day, "d")}</span>
-            {hasDiary && (
-              <span className="absolute top-0 right-0 text-xs">✅</span>
-            )}
-          </div>
-        </div>,
+          {/* 日付はこの span が flex で中央に配置 */}
+          <span>{format(day, "d")}</span>
+
+          {/* チェックマークはセル（relative）の右上に絶対配置 */}
+          {hasDiary && (
+            <span className="absolute top-1 right-1 text-xs">✅</span>
+          )}
+        </div>
       );
 
       day = addDays(day, 1);
