@@ -49,12 +49,13 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
           key={day.toISOString()}
           className={[
             "calendar-cell",
-            "bg-white",
-            "w-12 h-12 sm:w-16 sm:h-16",
+            "h-12 w-12 sm:h-16 sm:w-16",
             "border border-gray-300",
             "flex items-center justify-center",
             "text-sm sm:text-base",
-            isDisabled ? "bg-gray-100 text-gray-400 cursor-default" : "cursor-pointer",
+            isDisabled
+              ? "cursor-default bg-gray-100 text-gray-400"
+              : "cursor-pointer",
             isToday ? "border-2 border-blue-500" : "",
             hasDiary ? "bg-green-100" : "",
           ]
@@ -72,7 +73,7 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
               <span className="absolute top-0 right-0 text-xs">✅</span>
             )}
           </div>
-        </div>
+        </div>,
       );
 
       day = addDays(day, 1);

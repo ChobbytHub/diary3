@@ -1,11 +1,12 @@
-// vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: "/diary3/",
 
   plugins: [
+    tailwindcss(),
     react(),
 
     // /diary3 → /diary3/ にリダイレクトしてくれるだけの簡易ミドルウェア
@@ -23,5 +24,5 @@ export default defineConfig({
         });
       },
     },
-  ],
+  ]
 });

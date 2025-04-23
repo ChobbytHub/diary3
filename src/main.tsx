@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import AuthProvider from "./contexts/AuthProvider";
 import store from "./redux/store";
 import DiaryProvider from "./contexts/DiaryProvider";
-import "./index.css";
 
 const rootElement = document.getElementById("root");
 createRoot(rootElement!).render(
