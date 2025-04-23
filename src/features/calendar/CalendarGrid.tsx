@@ -10,7 +10,6 @@ import {
 } from "date-fns";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { isDateSelectable } from "../../utils/calendarUtils";
-import { getLocalToday } from "../../utils/dateHelpers";
 import { setSelectedDate } from "../../redux/slices/selectedDateSlice";
 
 type Props = {
@@ -18,11 +17,11 @@ type Props = {
 };
 
 const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
-  const today = getLocalToday();
   const dispatch = useAppDispatch();
 
   // Redux から日記データを取得
   const diaries = useAppSelector((state) => state.diary.diaries);
+  const selectedDate = useAppSelector((state) => state.selectedDate.value);
 
   // 日記のある日付だけを Set にまとめる
   const diaryDatesSet = useMemo(() => {
@@ -40,7 +39,8 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
 
     while (day <= endDate) {
       const isDisabled = !isDateSelectable(day, currentMonth);
-      const isToday = isSameDay(day, today);
+      const isSelected = selectedDate && isSameDay(day, new Date(selectedDate));
+
       const dayStr = format(day, "yyyy-MM-dd");
       const hasDiary = diaryDatesSet.has(dayStr);
 
@@ -57,7 +57,7 @@ const CalendarGrid: React.FC<Props> = ({ currentMonth }) => {
             !isDisabled
               ? "cursor-pointer bg-white text-black"
               : "cursor-not-allowed bg-gray-300 text-gray-500",
-            isToday && "border-2 border-blue-500",
+            isSelected && "border-2 border-blue-500",
             hasDiary && "bg-green-100",
           ]
             .filter(Boolean)
